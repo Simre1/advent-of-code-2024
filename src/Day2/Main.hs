@@ -16,16 +16,38 @@ import Text.Megaparsec qualified as P
 import Text.Megaparsec.Char qualified as P
 import Text.Megaparsec.Char.Lexer qualified as P
 
-type Input = ()
+type Input = [Report]
+
+type Report = [Int]
 
 readInput :: IO Input
-readInput = error "inputs/dayX/input"
+readInput = do
+  file <- readFile "inputs/day2/input"
+  pure $ fmap read . words <$> lines file
+
+isSafe :: Report -> Bool
+isSafe report =
+  let distances = combine dist report
+      signs = signum <$> distances
+   in all (head signs ==) signs && all (\d -> 1 <= abs d && abs d <= 3) distances
+  where
+    combine f (a : b : xs) = f a b : combine f (b : xs)
+    combine _ _ = []
+    dist a b = b - a
+
+dampenReport :: Report -> [Report]
+dampenReport report = report : removeOne report
+  where
+    removeOne (x : xs) = xs : ((x :) <$> removeOne xs)
+    removeOne [] = []
 
 solution1 :: Input -> IO ()
-solution1 input = pure ()
+solution1 input = do
+  print $ length $ filter id $ isSafe <$> input
 
 solution2 :: Input -> IO ()
-solution2 input = pure ()
+solution2 input = do
+  print $ length $ filter id $ any isSafe . dampenReport <$> input
 
 main :: IO ()
 main = do
