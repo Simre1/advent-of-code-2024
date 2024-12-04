@@ -72,6 +72,18 @@ signedNumberP = P.choice [negate <$ P.char '-', id <$ P.char '+', pure id] <*> n
 wordP :: Parser Text
 wordP = lexeme $ P.takeWhile1P (Just "Word") isAlphaNum
 
+annotatePosition :: [[a]] -> [[(V2 Int, a)]]
+annotatePosition matrix =
+  let row_major = zip [0 ..] (zip [0 ..] <$> matrix)
+   in fmap
+        ( \(rowIndex, row) ->
+            ( \(columnIndex, e) ->
+                (V2 columnIndex rowIndex, e)
+            )
+              <$> row
+        )
+        row_major
+
 gridParse :: String -> [(V2 Int, Char)]
 gridParse str =
   let row_major = zip [0 ..] (zip [0 ..] <$> Prelude.lines str)
@@ -163,8 +175,7 @@ anyChar = P.satisfy (const True)
 
 withoutIndex :: Int -> [a] -> [a]
 withoutIndex _ [] = []
-withoutIndex 0 (x:xs) = xs
-withoutIndex i (x:xs) = x:withoutIndex (pred i) xs
+withoutIndex 0 (x : xs) = xs
+withoutIndex i (x : xs) = x : withoutIndex (pred i) xs
 
 data Direction = DUp | DDown | DLeft | DRight deriving (Eq, Ord, Show, Bounded, Enum)
-
