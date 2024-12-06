@@ -1,7 +1,6 @@
 module Template where
 
 import Control.Applicative
-import Control.Applicative.Combinators qualified as P
 import Control.Monad
 import Control.Monad (guard)
 import Data.Function ((&))
@@ -17,7 +16,7 @@ import Data.Text.IO qualified as T
 import Data.Traversable (for, forM)
 import Data.Vector qualified as V
 import Shared
-import Text.Megaparsec qualified as P hiding (many)
+import Text.Megaparsec qualified as P
 import Text.Megaparsec.Char qualified as P
 import Text.Megaparsec.Char.Lexer qualified as P
 
