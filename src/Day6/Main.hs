@@ -98,12 +98,10 @@ solution1 (start, grid) = do
 solution2 :: Input -> IO ()
 solution2 (start, grid) = do
   let path = followGuard grid start
-  -- print path
   print $ countLoops grid path
 
 main :: IO ()
 main = do
   input <- readInput
-  -- print input
   solution1 input
   solution2 input
