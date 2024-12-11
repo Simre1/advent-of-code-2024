@@ -4,7 +4,9 @@ import Control.Applicative (Alternative (..))
 import Control.Monad (forM_)
 import Data.Char (isAlphaNum, isNumber)
 import Data.Functor (void)
+import Data.List qualified as L
 import Data.Map qualified as M
+import Data.Massiv.Array qualified as A
 import Data.Maybe (fromMaybe)
 import Data.Set qualified as S
 import Data.Text (Text)
@@ -138,6 +140,12 @@ anyCharP = P.satisfy (> ' ')
 
 matrix2DP :: (Char -> a) -> Parser [[a]]
 matrix2DP f = many1 $ do
+  r <- fmap f <$> many1 anyCharP
+  P.newline
+  return r
+
+parseStorableMatrix :: (A.Storable a) => (Char -> a) -> Parser (A.Array A.S A.Ix2 a)
+parseStorableMatrix f = fmap (A.fromLists' A.Seq) $ fmap (L.transpose . reverse) $ many1 $ do
   r <- fmap f <$> many1 anyCharP
   P.newline
   return r
